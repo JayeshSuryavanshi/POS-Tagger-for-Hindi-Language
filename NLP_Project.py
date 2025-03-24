@@ -1,57 +1,40 @@
-
 import nltk
 from nltk.corpus import indian
-from nltk.tag import tnt
-import string
+from nltk.tag import UnigramTagger, BigramTagger, TrigramTagger, DefaultTagger
+from sklearn.model_selection import train_test_split
 
+# Ensure necessary NLTK data is downloaded
+nltk.download("indian")
+nltk.download("punkt")
+nltk.download("punkt_tab")
 
-nltk.download('punkt')
-nltk.download()
+# Load Hindi tagged sentences from the Indian corpus
+tagged_sents = indian.tagged_sents("hindi.pos")
 
+# Split data into training and testing sets
+train_sents, test_sents = train_test_split(tagged_sents, test_size=0.1, random_state=42)
 
-tagged_set = 'hindi.pos'
-word_set = indian.sents(tagged_set)
-count = 0
-for sen in word_set:
-    count = count + 1
-    sen = "".join([" "+i if not i.startswith("'") and i not in string.punctuation else i for i in sen]).strip()
-    print (count, sen)
-print ('Total sentences in the tagged file are',count)
+# Define a default tagger (assigns 'NN' as a fallback tag)
+default_tagger = DefaultTagger("NN")
 
-train_perc = .9
+# Train a unigram tagger (fallback to default tagger)
+unigram_tagger = UnigramTagger(train_sents, backoff=default_tagger)
 
-train_rows = int(train_perc*count)
-test_rows = train_rows + 1
+# Train a bigram tagger (fallback to unigram tagger)
+bigram_tagger = BigramTagger(train_sents, backoff=unigram_tagger)
 
-print ('Sentences to be trained',train_rows, 'Sentences to be tested against',test_rows)
+# Train a trigram tagger (fallback to bigram tagger)
+trigram_tagger = TrigramTagger(train_sents, backoff=bigram_tagger)
 
+# Evaluate the model
+accuracy = trigram_tagger.evaluate(test_sents)
+print(f"Optimized Model Accuracy: {accuracy:.2%}")
 
-# In[ ]:
+# Tag a new sentence
+sentence = "३९ गेंदों में दो चौकों और एक छक्के की मदद से ३४ रन बनाने वाले परोरे अंत तक आउट नहीं हुए ।"
+tokens = nltk.word_tokenize(sentence)
+tagged_sentence = trigram_tagger.tag(tokens)
 
-
-data = indian.tagged_sents(tagged_set)
-train_data = data[:train_rows]
-test_data = data[test_rows:]
-
-
-pos_tagger = tnt.TnT()
-pos_tagger.train(train_data)
-pos_tagger.evaluate(test_data)
-
-
-# In[ ]:
-
-
-
-sentence_to_be_tagged = "३९ गेंदों में दो चौकों और एक छक्के की मदद से ३४ रन बनाने वाले परोरे अंत तक आउट नहीं हुए ।"
-
-tokenized = nltk.word_tokenize(sentence_to_be_tagged)
-
-
-print(pos_tagger.tag(tokenized))
-
-
-# In[ ]:
-
-
-data.df
+print("\nTagged Sentence:")
+for word, tag in tagged_sentence:
+    print(f"{word}/{tag}", end=" ")
