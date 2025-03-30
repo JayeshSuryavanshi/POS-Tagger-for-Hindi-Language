@@ -1,57 +1,64 @@
-
+# !pip install nltk==3.8.1
+# !pip install indic-nlp-library
 import nltk
-from nltk.corpus import indian
-from nltk.tag import tnt
-import string
-
-
+from nltk.tag import DefaultTagger, UnigramTagger, BigramTagger, TrigramTagger
+from indicnlp.tokenize.indic_tokenize import trivial_tokenize
+nltk.download('punkt_tab')
 nltk.download('punkt')
-nltk.download()
+nltk.download('nonbreaking_prefixes')  
+nltk.download('indian')
 
+# Function to parse CoNLL-U formatted files
+def parse_conllu(file_path):
+    sentences = []
+    with open(file_path, 'r', encoding='utf-8') as file:
+        sentence = []
+        for line in file:
+            if line.startswith('#') or not line.strip():
+                if sentence:
+                    sentences.append(sentence)
+                    sentence = []
+                continue
+            parts = line.split('\t')
+            if len(parts) != 10:
+                continue
+            word = parts[1]
+            pos_tag = parts[3]
+            sentence.append((word, pos_tag))
+        if sentence:
+            sentences.append(sentence)
+    return sentences
 
-tagged_set = 'hindi.pos'
-word_set = indian.sents(tagged_set)
-count = 0
-for sen in word_set:
-    count = count + 1
-    sen = "".join([" "+i if not i.startswith("'") and i not in string.punctuation else i for i in sen]).strip()
-    print (count, sen)
-print ('Total sentences in the tagged file are',count)
+# Define paths to the dataset files
+train_file = 'hi_hdtb-ud-train.conllu'
+test_file = 'hi_hdtb-ud-test.conllu'
 
-train_perc = .9
+# Parse the datasets
+train_sents = parse_conllu(train_file)
+test_sents = parse_conllu(test_file)
 
-train_rows = int(train_perc*count)
-test_rows = train_rows + 1
+# Initialize the default tagger with 'NN' as the fallback tag
+default_tagger = DefaultTagger('NN')
 
-print ('Sentences to be trained',train_rows, 'Sentences to be tested against',test_rows)
+# Train the taggers with backoff
+unigram_tagger = UnigramTagger(train_sents, backoff=default_tagger)
+bigram_tagger = BigramTagger(train_sents, backoff=unigram_tagger)
+trigram_tagger = TrigramTagger(train_sents, backoff=bigram_tagger)
 
+# Evaluate the tagger
+accuracy = trigram_tagger.accuracy(test_sents)
+print(f"Model Accuracy: {accuracy:.2%}")
 
-# In[ ]:
+# Sample sentence
+sentence = "दो आदमी आए।"
 
+# Tokenize the sentence
+tokens = trivial_tokenize(sentence, lang='hi')
 
-data = indian.tagged_sents(tagged_set)
-train_data = data[:train_rows]
-test_data = data[test_rows:]
+# Tag the tokens
+tagged_sentence = trigram_tagger.tag(tokens)
 
-
-pos_tagger = tnt.TnT()
-pos_tagger.train(train_data)
-pos_tagger.evaluate(test_data)
-
-
-# In[ ]:
-
-
-
-sentence_to_be_tagged = "३९ गेंदों में दो चौकों और एक छक्के की मदद से ३४ रन बनाने वाले परोरे अंत तक आउट नहीं हुए ।"
-
-tokenized = nltk.word_tokenize(sentence_to_be_tagged)
-
-
-print(pos_tagger.tag(tokenized))
-
-
-# In[ ]:
-
-
-data.df
+# Display the tagged sentence
+print("\nTagged Sentence:")
+for word, tag in tagged_sentence:
+    print(f"{word}/{tag}", end=' ')
