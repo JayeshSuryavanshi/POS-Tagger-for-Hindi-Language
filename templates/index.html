@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <title>Hindi POS Tagger</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h2>Hindi POS Tagger (LSTM)</h2>
+    <form method="POST">
+        <textarea name="sentence" rows="3" cols="50" placeholder="Type a Hindi sentence...">{{ sentence }}</textarea>
+        <br><button type="submit">Tag Sentence</button>
+    </form>
+
+    {% if tagged %}
+    <h3>Tagged Output:</h3>
+    <div>
+        {% for word, tag in tagged %}
+            <span><strong>{{ word }}</strong>/{{ tag }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+</body>
+</html>
