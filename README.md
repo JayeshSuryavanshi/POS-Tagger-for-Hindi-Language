@@ -88,3 +88,8 @@ python importnltk.py
 - Python 3.8+
 - NLTK 3.8.1
 - indic-nlp-library
+
+
+## Data
+
+The Hindi UD treebank files (`hi_hdtb-ud-train.conllu`, `hi_hdtb-ud-test.conllu`, ~52 MB) are **not** committed. Download the UD Hindi-HDTB treebank from https://universaldependencies.org/ (or https://github.com/UniversalDependencies/UD_Hindi-HDTB) and place the `.conllu` files in the repo root to run the tagger.
