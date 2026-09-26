@@ -11,5 +11,5 @@ env/
 # NLTK downloaded data (downloaded automatically at runtime)
 nltk_data/
 
-# UD treebank data — download separately (see README), do not commit
+# UD treebank data: download separately (see README), do not commit
 *.conllu

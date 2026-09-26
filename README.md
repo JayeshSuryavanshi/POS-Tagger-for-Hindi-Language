@@ -30,10 +30,10 @@ The primary, up-to-date implementation is **`NLP_Project.py`**.
 
 ## Dataset
 
-The repository includes the UD Hindi-HDTB treebank splits in CoNLL-U format:
+The tagger reads the UD Hindi-HDTB treebank splits in CoNLL-U format (not committed to this repo; see [Data](#data) for the download):
 
-- `hi_hdtb-ud-train.conllu` — training sentences
-- `hi_hdtb-ud-test.conllu` — test sentences
+- `hi_hdtb-ud-train.conllu`: training sentences
+- `hi_hdtb-ud-test.conllu`: test sentences
 
 Each token line is tab-separated; column 2 is the word form and column 4 is the
 universal POS tag.
@@ -77,8 +77,8 @@ python importnltk.py
 .
 ├── NLP_Project.py            # Main n-gram back-off tagger (UD Hindi-HDTB)
 ├── importnltk.py             # Alternative TnT tagger (NLTK indian corpus)
-├── hi_hdtb-ud-train.conllu   # Training data
-├── hi_hdtb-ud-test.conllu    # Test data
+├── hi_hdtb-ud-train.conllu   # Training data (download, not committed)
+├── hi_hdtb-ud-test.conllu    # Test data (download, not committed)
 ├── Hindipos.pdf              # Project report
 └── requirements.txt
 ```
