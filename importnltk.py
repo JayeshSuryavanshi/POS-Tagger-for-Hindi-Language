@@ -5,7 +5,8 @@ import string
 
 
 nltk.download('punkt')
-nltk.download()
+nltk.download('punkt_tab')
+nltk.download('indian')
 
 tagged_set = 'hindi.pos'
 word_set = indian.sents(tagged_set)
