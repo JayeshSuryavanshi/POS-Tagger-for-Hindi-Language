@@ -41,7 +41,7 @@ universal POS tag.
 ## Setup
 
 ```bash
-# Python 3.8+
+# Python 3.10+ (nltk 3.10 requires it)
 pip install -r requirements.txt
 ```
 
