@@ -1,2 +1,2 @@
-nltk==3.10.3
+nltk==3.10.4
 indic-nlp-library
